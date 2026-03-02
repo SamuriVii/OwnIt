@@ -1,0 +1,88 @@
+name: OwnIt-Dev
+
+services:
+
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#. BACKEND
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  backend:
+    container_name: ownit-backend-dev
+    image: ownit-backend:dev
+    init: true 
+    tty: true
+    restart: on-failure
+
+    build: 
+      context: ./backend
+      dockerfile: ./Dockerfile.Dev
+
+    env_file:
+      - .env
+
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+
+    volumes:
+      - ./backend:/app:z
+
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    
+    networks:
+      - app-network
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    labels:
+      org.opencontainers.image.title: "OwnIt Dev Backend"
+      org.opencontainers.image.description: "Development environment for OwnIt"
+      maintainer: "programowanie.dr011@gmail.com"
+
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#. DATABASE
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  database:
+    image: postgres:16-alpine
+    container_name: ownit-database-dev
+    restart: always
+
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - app-network
+
+
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#. VOLUMES & NETWORK
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    name: dev_network
+    driver: bridge
+

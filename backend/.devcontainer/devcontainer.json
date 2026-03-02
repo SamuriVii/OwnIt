@@ -1,0 +1,42 @@
+{
+    "name": "OwnIt-Backend-FastAPI",
+    "dockerComposeFile": "../../docker-compose.dev.yml",
+    "service": "backend",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Core Python & Tooling setup
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.languageServer": "Pylance",
+                "python.analysis.typeCheckingMode": "strict",
+                
+                // Ruff - The Speed Demon
+                "editor.defaultFormatter": "charliermarsh.ruff",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.ruff": "explicit",
+                    "source.organizeImports.ruff": "explicit"
+                },
+
+                // File Visibility - Keeping it clean
+                "files.exclude": {
+                    "**/.ruff_cache": true,
+                    "**/.pytest_cache": true,
+                    "**/.mypy_cache": true,
+                    "**/__pycache__": true,
+                    "**/.venv": true,
+                    "**/.coverage": true
+                }
+            },
+            "extensions": [
+                "ms-python.python",            // Python (Microsoft)
+                "ms-python.debugpy",           // Python Debugger
+                "charliermarsh.ruff",          // Ruff (Astral)
+                "ms-python.mypy-type-checker", // Mypy Type Checker
+                "tamasfe.even-better-toml"     // Even Better TOML
+            ]
+        }
+    },
+    "remoteUser": "root"
+}
