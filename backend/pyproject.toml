@@ -14,7 +14,10 @@
         "fastapi==0.115.0",
         "uvicorn[standard]==0.30.0",
         "pydantic-settings==2.5.0",
-        "pydantic==2.9.0"
+        "pydantic==2.9.0",
+        "sqlalchemy>=2.0.35",
+        "psycopg2-binary>=2.9.9",
+        "alembic>=1.14.0"
     ]
 
 # Development dependencies - install with: pip install -e ".[dev]"
@@ -61,9 +64,15 @@
 [tool.ruff.lint.mccabe]
     max-complexity = 10
 
+# Allow FastAPI Dependency Injection and params in default arguments (Ruff B008)
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body"]
+
+
 # Base Pytest configuration
 [tool.pytest.ini_options]
     asyncio_mode = "auto" # Automatically handle async tests without extra decorators
+    asyncio_default_fixture_loop_scope = "function" # Turn off asyncio_default_fixture_loop_scope warning
     testpaths = ["tests"] # Directory where tests are located
     python_files = "test_*.py" # File naming pattern for test discovery
     addopts = "-v --cov=app" # Default CLI arguments: verbose output and coverage report for 'app' folder
