@@ -71,16 +71,16 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.
 
 # Base Pytest configuration
 [tool.pytest.ini_options]
-    asyncio_mode = "auto" # Automatically handle async tests without extra decorators
+    asyncio_mode = "auto"                           # Automatically handle async tests without extra decorators
     asyncio_default_fixture_loop_scope = "function" # Turn off asyncio_default_fixture_loop_scope warning
-    testpaths = ["tests"] # Directory where tests are located
-    python_files = "test_*.py" # File naming pattern for test discovery
-    addopts = "-v --cov=app" # Default CLI arguments: verbose output and coverage report for 'app' folder
+    testpaths = ["tests"]                           # Directory where tests are located
+    python_files = "test_*.py"                      # File naming pattern for test discovery
+    addopts = "-v --cov=app"                        # Default CLI arguments: verbose output and coverage report for 'app' folder
 
 # Base Mypy configuration
 [tool.mypy]
     python_version = "3.13"
-    strict = true  # Enable all optional error checks (strict mode)
+    strict = true               # Enable all optional error checks (strict mode)
     plugins = ["pydantic.mypy"] # Pydantic plugin for better model validation during analysis
 
 # Suppress errors for libraries without type stubs
