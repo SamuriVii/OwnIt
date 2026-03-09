@@ -17,7 +17,8 @@
         "pydantic==2.9.0",
         "sqlalchemy>=2.0.35",
         "psycopg2-binary>=2.9.9",
-        "alembic>=1.14.0"
+        "alembic>=1.14.0",
+        "loguru>=0.7.2"
     ]
 
 # Development dependencies - install with: pip install -e ".[dev]"
@@ -68,6 +69,9 @@
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body"]
 
+# Ignore "assert" detection in all test files
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
 
 # Base Pytest configuration
 [tool.pytest.ini_options]
@@ -75,7 +79,14 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.
     asyncio_default_fixture_loop_scope = "function" # Turn off asyncio_default_fixture_loop_scope warning
     testpaths = ["tests"]                           # Directory where tests are located
     python_files = "test_*.py"                      # File naming pattern for test discovery
+    pythonpath = ["."]                              # Adds current directory to sys.path
     addopts = "-v --cov=app"                        # Default CLI arguments: verbose output and coverage report for 'app' folder
+    
+    # Logger configuration for pytest - shows logs in the console during test runs
+    log_cli = true
+    log_cli_level = "INFO"
+    log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+    log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 
 # Base Mypy configuration
 [tool.mypy]

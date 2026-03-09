@@ -98,10 +98,29 @@ Run these commands inside the container terminal:
 | Task        | Command         | Description                                    |
 | ----------- | --------------- | ---------------------------------------------- |
 | Run Tests   | `pytest`        | Runs the test suite with coverage report       |
+| Run Tests (with logs) | `pytest -s`      | Shows logging output from tests (e.g., loguru) |
 | Lint Check  | `ruff check .`  | Checks for logical errors and style violations |
 | Format Code | `ruff format .` | Automatically formats code to PEP8 standards   |
 | Type Check  | `mypy .`        | Runs strict type analysis                      |
 
+
+---
+
+## 📣 Logging (loguru)
+
+This project uses **loguru** for structured application logging.
+
+### 🔍 Log Levels
+You can emit logs at different levels depending on the importance:
+
+- `logger.debug(...)` – verbose debugging info
+- `logger.info(...)` – general runtime information
+- `logger.warning(...)` – something suspicious but recoverable
+- `logger.error(...)` – runtime errors that should be investigated
+- `logger.critical(...)` – severe failures
+- `logger.exception(...)` – logs an exception trace (works like `error()` but also includes the stack trace)
+
+> 🔎 **Tip:** When running tests, use `pytest -s` to see logger output in the console. Otherwise, pytest captures log output by default, and you may not see it.
 
 ---
 

@@ -18,6 +18,9 @@ class Settings(BaseSettings):
 
     # --- DATABASE SETTINGS ---
     DB_URL: PostgresDsn = "postgresql+psycopg2://admin:secret@db:5432/ownit_db"  # type: ignore
+    TEST_DB_URL: PostgresDsn = (
+        "postgresql+psycopg2://admin:secret@db:5432/ownit_test_db"  # type: ignore
+    )
     DB_ECHO_SQL: bool = False  # Set to True in .env to see SQL in console
 
     # --- SECURITY ---

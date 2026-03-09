@@ -27,7 +27,10 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 # 5. Dynamically set the database URL from our Pydantic settings (.env)
-config.set_main_option("sqlalchemy.url", str(settings.DB_URL))
+# Only override the URL when the config is still using the placeholder from alembic.ini
+alembic_url = config.get_main_option("sqlalchemy.url")
+if not alembic_url or alembic_url.startswith("driver://"):
+    config.set_main_option("sqlalchemy.url", str(settings.DB_URL))
 
 
 def run_migrations_offline() -> None:
