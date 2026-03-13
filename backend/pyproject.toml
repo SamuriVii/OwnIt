@@ -18,11 +18,12 @@
         "sqlalchemy>=2.0.35",
         "psycopg2-binary>=2.9.9",
         "alembic>=1.14.0",
-        "loguru>=0.7.2"
-    ]
+        "loguru>=0.7.2",
+        "python-multipart>=0.0.22",
+]
 
-# Development dependencies - install with: pip install -e ".[dev]"
-[project.optional-dependencies]
+# Development dependencies
+[dependency-groups]
     dev = [
         "ruff==0.6.0",
         "pytest==8.3.0",

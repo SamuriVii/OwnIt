@@ -1,147 +1,166 @@
 # OwnIt - Backend API 🚀
 
 A sleek and powerful self-management API built with **FastAPI** and **Python 3.13**.
-This service handles the core logic, data management, and personal growth tracking for the OwnIt application.
+This project uses a Makefile-first workflow for dev tasks (running tests, linting, type-check, migrations, dependencies).  
+All documentation is in English.
 
 ---
 
-## 🛠 Development Environment
+## 📦 Prerequisites
 
-The project is fully containerized to ensure environment consistency across different machines.
-We use **WSL2** and **Docker** for the development workflow.
+- Docker + Docker Compose (for containerized local dev)
+- `uv` (recommended package manager, used in Makefile)
+- `make`
+- Python 3.13 (inside the container / local environment)
+
+> Use `uv` instead of `pip` for dependency management in this project.
 
 ---
 
-## 🚀 Quick Start (Dev Mode)
-
-To spin up the development environment, run the following command from the **root directory** of the project:
+## 🚀 Local development start (container)
+Make sure that the main repository is running.
 
 ```bash
+cd /OwnIt
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-### API Endpoints
-
-- **API URL:** [http://localhost:8000](http://localhost:8000)  
-- **Interactive API Docs (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)  
-- **Alternative Docs (Redoc):** [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
----
-
-## 💻 Recommended Setup (Cursor / VS Code)
-
-To get the best developer experience (IntelliSense, linting, debugging), we highly recommend using the Dev Containers workflow to connect directly to the running container.
-
-### 1️⃣ Essential Extensions
-
-Install these inside your editor to work seamlessly with the containerized Python environment:
-
-- **Dev Containers (Microsoft)** – Connects your editor to the running Docker container  
-- **Python (Microsoft)** – Core support for Python 3.13  
-- **Python Debugger** – Enables setting breakpoints inside the container  
-- **Ruff (Astral)** – Extremely fast linting & formatting  
-- **Mypy Type Checker** – Strict static type checking  
-- **Even Better TOML** – Syntax highlighting and validation for `pyproject.toml`
+API endpoints:
+- http://localhost:8000
+- Swagger: http://localhost:8000/docs
+- Redoc: http://localhost:8000/redoc
 
 ---
 
-### 2️⃣ Connecting to the Container
+## 🖥️ Preferred VS Code workflow (WSL2 + Dev Container)
 
-1. Ensure the containers are running:
+1. Open the repo from WSL workspace path (`/OwntIt/backend`) in VS Code.
+2. Use command palette (`Ctrl+Shift+P`) and run `Remote-WSL: Reopen Folder in WSL`.
+3. Then run `Dev Containers: Reopen in Container` (target `ownit-backend-dev` container).
+4. Inside container terminal run project commands e.g. `make test`, `make migrate`.
+
+---
+
+## 🔧 Developer workflow (Makefile-first)
+
+Most commands should be run inside the container shell once it is up.
+Use `make <target>` for everything.
+
+### All available commands (cheat sheet)
+
+| Make target | Purpose | Equivalent commands |
+|------------|---------|----------------------|
+| `make help` | Show all available targets | `make help` |
+| `make add p=<package>` | Add production dependency | `uv add <package>` |
+| `make add-dev p=<package>` | Add dev dependency | `uv add --group dev <package>` |
+| `make migrations m="name"` | Auto-generate alembic migration | `alembic revision --autogenerate -m "name"` |
+| `make migrate` | Apply migrations | `alembic upgrade head` |
+| `make rollback` | Roll back last migration | `alembic downgrade -1` |
+| `make history` | Show migration history | `alembic history --verbose` |
+| `make current` | Show current migration | `alembic current` |
+| `make test` | Run pytest | `pytest` |
+| `make test-v` | Run pytest with logs | `pytest -s` |
+| `make lint` | Ruff lint check | `ruff check .` |
+| `make format` | Ruff format | `ruff format .` |
+| `make type-check` | Mypy type check | `mypy .` |
+| `make check-all` | format + lint + type-check + tests | (chained) |
+| `make clean` | remove caches and coverage artifacts | cleanup dirs |
+
+---
+
+## 🧪 Quality commands
+
+Use `make` for consistency:
 
 ```bash
-docker compose -f docker-compose.dev.yml up
+make test          # run tests
+make test-v        # run tests with visible logs
+make lint          # ruff static checks
+make format        # ruff formatting
+make type-check    # mypy check
+make check-all     # all quality gates
 ```
 
-1. Click the **Remote Window icon** (bottom-left corner of Cursor) or press `Ctrl+Shift+P`
-2. Select **"Reopen in Container..."**
-3. Choose `ownit-backend-dev`
-4. Once connected, open the `/app` folder inside the container
-
 ---
 
-## 🗄️ Database Migrations (Alembic)
+## 🗄 Database and Alembic
 
-This project uses **Alembic** for database schema management. Whenever you modify a model in the `app/models/` directory, you need to generate and apply a migration.
-
-### 🔄 Your Daily Workflow
-
-When you change the database schema (e.g., adding a new column in `models/users.py`), follow these steps inside the container terminal:
-
-1. **Generate a migration script:**
-   ```bash
-   alembic revision --autogenerate -m "change description"
-   ```
-2. **Synchronize the DEV database:**
-   ```bash
-   alembic upgrade head
-   ```
-
-### 🛠️ Useful Alembic Commands
-
-| Task                 | Command                     | Description                     |
-| -------------------- | --------------------------- | ------------------------------- |
-| Apply all migrations | `alembic upgrade head`      | Brings DB to the latest version |
-| Rollback 1 version   | `alembic downgrade -1`      | Reverts the last migration      |
-| View history         | `alembic history --verbose` | Lists all applied migrations    |
-| Current state        | `alembic current`           | Shows the current DB revision   |
-
----
-
-## 🧪 Quality Control & Testing
-
-All tools are pre-configured in `pyproject.toml`.
-
-Run these commands inside the container terminal:
-
-
-| Task        | Command         | Description                                    |
-| ----------- | --------------- | ---------------------------------------------- |
-| Run Tests   | `pytest`        | Runs the test suite with coverage report       |
-| Run Tests (with logs) | `pytest -s`      | Shows logging output from tests (e.g., loguru) |
-| Lint Check  | `ruff check .`  | Checks for logical errors and style violations |
-| Format Code | `ruff format .` | Automatically formats code to PEP8 standards   |
-| Type Check  | `mypy .`        | Runs strict type analysis                      |
-
-
----
-
-## 📣 Logging (loguru)
-
-This project uses **loguru** for structured application logging.
-
-### 🔍 Log Levels
-You can emit logs at different levels depending on the importance:
-
-- `logger.debug(...)` – verbose debugging info
-- `logger.info(...)` – general runtime information
-- `logger.warning(...)` – something suspicious but recoverable
-- `logger.error(...)` – runtime errors that should be investigated
-- `logger.critical(...)` – severe failures
-- `logger.exception(...)` – logs an exception trace (works like `error()` but also includes the stack trace)
-
-> 🔎 **Tip:** When running tests, use `pytest -s` to see logger output in the console. Otherwise, pytest captures log output by default, and you may not see it.
-
----
-
-## 📦 Dependency Management
-
-This project uses `pyproject.toml` as the single source of truth for dependencies.
-
-To update your environment after adding new packages:
+Always run migration workflow after model/schema updates (`app/models/`).
 
 ```bash
-pip install -e ".[dev]"
+make migrations m="add field X"
+make migrate
 ```
 
-> **Note:** Major changes to dependencies may require a container rebuild using the `--build` flag.
+Roll back a single revision:
+
+```bash
+make rollback
+```
+
+Use these for inspection:
+
+```bash
+make history
+make current
+```
 
 ---
 
-## 📝 Project Structure Highlights
+## 🌐 IDE / VS Code Recommendations
 
-- `/app` – Main application code  
-- `/tests` – Pytest suite  
-- `pyproject.toml` – Modern Python project configuration (Ruff, Mypy, Pytest)  
-- `Dockerfile.dev` – Optimized development container image
+Recommended VS Code extensions:
+- Dev Containers (Microsoft)
+- Python (Microsoft)
+- Ruff (Astral)
+- Mypy (if available) or Python type-checking support
+- Even Better Toml
+- PostgreSQL / Database Client extension (e.g., `PostgreSQL` by Chris Kolkman)
+
+> Dev Containers can automatically install workspace recommended extensions and tooling from `.devcontainer/devcontainer.json`. If some extension is missing, install it manually in the container.
+
+### Database Client setup
+
+- Prefer auto-magic connection from `.env` variable (if extension supports it)
+- Or configure connection URL manually from `.env`:
+  - `DATABASE_URL=postgresql://user:pass@host:port/dbname`
+
+---
+
+## 📁 Project structure
+
+- `app/` : main FastAPI application code (controllers, routes, business logic)
+- `tests/` : pytest test suite
+- `alembic/` : DB migration scripts + config
+- `.devcontainer/` : container setup (Dev Container definitions)
+- `alembic.ini` : alembic settings
+- `Dockerfile.dev` : dev container image
+- `pyproject.toml` : central tooling configuration (ruff, mypy, pytest)
+- `Makefile` : developer CLI workflow
+- `uv.lock` : locked dependency graph
+
+---
+
+## 🔁 Dependency management
+
+Install all dependencies using `uv`:
+
+```bash
+uv install
+```
+
+Add packages from Makefile:
+
+```bash
+make add p=requests
+make add-dev p=pytest
+```
+
+---
+
+## 📝 Notes
+
+- Keep README and workflows in sync with Makefile.
+- Use `make *` for deterministic and low-cognitive effort commands.
+- `uv` replaced direct `pip` usage, per project policy.
 

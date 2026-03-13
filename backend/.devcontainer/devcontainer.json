@@ -27,14 +27,20 @@
                     "**/__pycache__": true,
                     "**/.venv": true,
                     "**/.coverage": true
-                }
+                },
+
+                // Database Client Global Settings
+                "database-client.autoConnect": true
+
             },
             "extensions": [
-                "ms-python.python",            // Python (Microsoft)
-                "ms-python.debugpy",           // Python Debugger
-                "charliermarsh.ruff",          // Ruff (Astral)
-                "ms-python.mypy-type-checker", // Mypy Type Checker
-                "tamasfe.even-better-toml"     // Even Better TOML
+                "ms-python.python",                // Python (Microsoft)
+                "ms-python.debugpy",               // Python Debugger
+                "charliermarsh.ruff",              // Ruff (Astral)
+                "ms-python.mypy-type-checker",     // Mypy Type Checker
+                "tamasfe.even-better-toml",        // Even Better TOML
+                "cweijan.vscode-database-client2", // Database Client
+                "ms-azuretools.vscode-docker"
             ]
         }
     },
