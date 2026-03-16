@@ -40,7 +40,8 @@
                 "ms-python.mypy-type-checker",     // Mypy Type Checker
                 "tamasfe.even-better-toml",        // Even Better TOML
                 "cweijan.vscode-database-client2", // Database Client
-                "ms-azuretools.vscode-docker"
+                "ms-azuretools.vscode-docker",     // Docker (Microsoft)
+                "echoapi.echoapi-for-vscode"       // EchoAPI (EchoAPI)
             ]
         }
     },

@@ -115,7 +115,10 @@ Recommended VS Code extensions:
 - Ruff (Astral)
 - Mypy (if available) or Python type-checking support
 - Even Better Toml
-- PostgreSQL / Database Client extension (e.g., `PostgreSQL` by Chris Kolkman)
+- Database Client extension
+- EchoAPI
+
+EchoAPI is great for quickly sending test requests to local endpoints while coding; use it as a lightweight scratchpad for API calls without opening Postman.
 
 > Dev Containers can automatically install workspace recommended extensions and tooling from `.devcontainer/devcontainer.json`. If some extension is missing, install it manually in the container.
 
@@ -133,6 +136,7 @@ Recommended VS Code extensions:
 - `tests/` : pytest test suite
 - `alembic/` : DB migration scripts + config
 - `.devcontainer/` : container setup (Dev Container definitions)
+- `.vscode/`: visual studio code tests configuration
 - `alembic.ini` : alembic settings
 - `Dockerfile.dev` : dev container image
 - `pyproject.toml` : central tooling configuration (ruff, mypy, pytest)
