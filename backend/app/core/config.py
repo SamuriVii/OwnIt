@@ -17,14 +17,19 @@ class Settings(BaseSettings):
     ENVIRONMENT: Environment = Environment.DEV
 
     # --- DATABASE SETTINGS ---
-    DB_URL: PostgresDsn = "postgresql+psycopg2://admin:secret@db:5432/ownit_db"  # type: ignore
+    DB_URL: PostgresDsn = "postgresql+psycopg2://admin:secret@database:5432/ownit_db"  # type: ignore
     TEST_DB_URL: PostgresDsn = (
-        "postgresql+psycopg2://admin:secret@db:5432/ownit_test_db"  # type: ignore
+        "postgresql+psycopg2://admin:secret@database:5432/ownit_test_db"  # type: ignore
     )
     DB_ECHO_SQL: bool = False  # Set to True in .env to see SQL in console
 
+    # --- REDIS SETTINGS ---
+    REDIS_URL: str = "redis://redis:6379/0"
+    REDIS_TEST_URL: str = "redis://redis:6379/1"
+    REDIS_MAX_CONNECTIONS: int | None = None
+
     # --- SECURITY ---
-    SECRET_KEY: str = "change-me-in-production"
+    SECRET_KEY: str = None  # type: ignore # Required — no default, must be set in .env
 
     # --- LOGGING ---
     LOG_LEVEL: str = "INFO"

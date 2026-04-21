@@ -162,6 +162,35 @@ make add-dev p=pytest
 
 ---
 
+## 📋 Logging levels (Loguru)
+
+This project uses [Loguru](https://loguru.readthedocs.io/) for structured logging. Active level is controlled by `LOG_LEVEL` in `.env`.
+
+| Level | Value | When to use |
+|-------|-------|-------------|
+| `TRACE` | 5 | Extremely detailed flow tracing — loops, individual steps inside a function. Almost never in production. |
+| `DEBUG` | 10 | Development diagnostics — variable values, branch taken, query params. Off in production. |
+| `INFO` | 20 | Normal operational events — request received, service started, migration applied. Default level. |
+| `SUCCESS` | 25 | Explicit confirmation of a completed operation — user registered, payment processed. Loguru-specific. |
+| `WARNING` | 30 | Something unexpected but recoverable — deprecated endpoint hit, retry attempted, config fallback used. |
+| `ERROR` | 40 | Operation failed, requires attention — DB query failed, external API returned 5xx, file not found. |
+| `CRITICAL` | 50 | System-level failure — app cannot continue, data corruption risk, unrecoverable state. |
+
+```python
+log.trace("Entering loop iteration {i}", i=i)
+log.debug("Resolved user_id={uid}", uid=user_id)
+log.info("Health check requested")
+log.success("User {email} registered successfully", email=email)
+log.warning("Deprecated endpoint /v0/health called")
+log.error("Failed to connect to payment provider: {err}", err=e)
+log.critical("Database volume full — writes rejected")
+```
+
+> Use `log.exception(...)` inside `except` blocks — it automatically attaches the full traceback.
+> In production (`ENVIRONMENT=production`), set `LOG_LEVEL=WARNING` or `ERROR` to reduce noise.
+
+---
+
 ## 📝 Notes
 
 - Keep README and workflows in sync with Makefile.

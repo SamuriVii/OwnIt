@@ -44,6 +44,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
     labels:
       org.opencontainers.image.title: "OwnIt Dev Backend"
@@ -65,7 +67,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
 
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -80,6 +82,42 @@ services:
     networks:
       - app-network
 
+    labels:
+      org.opencontainers.image.title: "OwnIt Dev Database"
+      org.opencontainers.image.description: "Database for OwnIt development"
+      maintainer: "programowanie.dr011@gmail.com"
+
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#. REDIS
+#. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  redis:
+    image: redis:7-alpine
+    container_name: ownit-redis-dev
+    restart: always
+
+    command: >
+      redis-server
+      --loglevel notice
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - app-network
+
+    labels:
+      org.opencontainers.image.title: "OwnIt Dev Redis"
+      org.opencontainers.image.description: "Redis cache for OwnIt development"
+      maintainer: "programowanie.dr011@gmail.com"
 
 #. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #. VOLUMES & NETWORK
@@ -92,4 +130,3 @@ networks:
   app-network:
     name: dev_network
     driver: bridge
-
