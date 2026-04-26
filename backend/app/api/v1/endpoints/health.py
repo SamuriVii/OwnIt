@@ -1,9 +1,7 @@
-from fastapi import APIRouter, Depends, Response
-from redis import Redis
+from fastapi import APIRouter, Response
 from sqlalchemy import text
-from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_db, get_redis
+from app.api.dependencies import AsyncDB, AsyncRedisClient
 from app.core.config import settings
 from app.core.logger import log
 from app.schemas.health import (
@@ -17,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/live", response_model=LivenessResponse)
-def check_liveness() -> LivenessResponse:
+async def check_liveness() -> LivenessResponse:
     return LivenessResponse(
         status="ok",
         environment=settings.ENVIRONMENT.value,
@@ -26,15 +24,15 @@ def check_liveness() -> LivenessResponse:
 
 
 @router.get("/db", response_model=DatabaseHealthResponse)
-def check_db_health(
+async def check_db_health(
     response: Response,
-    db: Session = Depends(get_db),
+    db: AsyncDB,
 ) -> DatabaseHealthResponse:
     log.info("Database health check requested")
     db_status = "ok"
 
     try:
-        db.execute(text("SELECT 1"))
+        await db.execute(text("SELECT 1"))
         log.debug("Database connectivity verified")
     except Exception as e:
         db_status = f"error: {e}"
@@ -50,15 +48,15 @@ def check_db_health(
 
 
 @router.get("/redis", response_model=RedisHealthResponse)
-def check_redis_health(
+async def check_redis_health(
     response: Response,
-    redis: Redis = Depends(get_redis),
+    redis: AsyncRedisClient,
 ) -> RedisHealthResponse:
     log.info("Redis health check requested")
     redis_status = "ok"
 
     try:
-        redis.ping()  # pyright: ignore[reportUnknownMemberType]
+        await redis.ping()  # type: ignore[misc]
         log.debug("Redis connectivity verified")
     except Exception as e:
         redis_status = f"error: {e}"
@@ -74,23 +72,23 @@ def check_redis_health(
 
 
 @router.get("/", response_model=OverallHealthResponse)
-def check_overall_health(
+async def check_overall_health(
     response: Response,
-    db: Session = Depends(get_db),
-    redis: Redis = Depends(get_redis),
+    db: AsyncDB,
+    redis: AsyncRedisClient,
 ) -> OverallHealthResponse:
     log.info("Overall health check requested")
     db_status = "ok"
     redis_status = "ok"
 
     try:
-        db.execute(text("SELECT 1"))
+        await db.execute(text("SELECT 1"))
     except Exception as e:
         db_status = f"error: {e}"
         log.exception("Database unreachable during overall health check")
 
     try:
-        redis.ping()  # pyright: ignore[reportUnknownMemberType]
+        await redis.ping()  # type: ignore[misc]
     except Exception as e:
         redis_status = f"error: {e}"
         log.exception("Redis unreachable during overall health check")

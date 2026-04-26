@@ -21,6 +21,7 @@
         "loguru>=0.7.2",
         "python-multipart>=0.0.22",
         "redis>=7.4.0",
+        "asyncpg>=0.31.0",
 ]
 
 # Development dependencies
@@ -98,5 +99,9 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.
 
 # Suppress errors for libraries without type stubs
 [[tool.mypy.overrides]]
-    module = "sqlalchemy.*"
+    module = ["sqlalchemy.*", "redis.*"]
     ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+    module = "redis.*"
+    disallow_untyped_calls = false  # ping() / flushdb() return type is ambiguous in stubs

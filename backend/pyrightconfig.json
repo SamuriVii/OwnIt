@@ -1,0 +1,9 @@
+{
+    "venvPath": ".",
+    "pythonVersion": "3.13",
+    "typeCheckingMode": "strict",
+
+    // redis-py stubs declare ping()/flushdb() as Awaitable[T] | T — known stubs limitation
+    "reportUnknownMemberType": "warning",
+    "reportUnknownVariableType": "warning"
+}

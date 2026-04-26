@@ -17,10 +17,17 @@ class Settings(BaseSettings):
     ENVIRONMENT: Environment = Environment.DEV
 
     # --- DATABASE SETTINGS ---
+    # Sync — Alembic only
     DB_URL: PostgresDsn = "postgresql+psycopg2://admin:secret@database:5432/ownit_db"  # type: ignore
     TEST_DB_URL: PostgresDsn = (
         "postgresql+psycopg2://admin:secret@database:5432/ownit_test_db"  # type: ignore
     )
+    # Async — application
+    ASYNC_DB_URL: str = "postgresql+asyncpg://admin:secret@database:5432/ownit_db"
+    ASYNC_TEST_DB_URL: str = (
+        "postgresql+asyncpg://admin:secret@database:5432/ownit_test_db"
+    )
+
     DB_ECHO_SQL: bool = False  # Set to True in .env to see SQL in console
 
     # --- REDIS SETTINGS ---
